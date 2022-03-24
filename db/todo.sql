@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS item (
+    id SERIAL PRIMARY KEY,
+    text VARCHAR(255),
+    status VARCHAR(10)
+);
