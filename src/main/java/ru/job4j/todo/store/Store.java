@@ -9,6 +9,5 @@ public interface Store {
     boolean updateItem(Item item);
     boolean delete(int id);
     List<Item> findAll();
-    List<Item> findByStatus(boolean done);
     Item findById(int id);
 }
