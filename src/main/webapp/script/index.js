@@ -94,7 +94,7 @@ function addItem() {
         generate(item);
         document.location.reload();
     }).fail(function (err) {
-        alert(err)
+        console.log(err)
     });
     description.value = "";
 }

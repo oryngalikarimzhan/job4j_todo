@@ -14,17 +14,20 @@ public class Item {
     private Timestamp created =  new Timestamp(System.currentTimeMillis());;
     private boolean done = false;
 
-    public Item() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Item(String description) {
-        this.description = description;
-    }
-
-    public static Item of(String description, boolean done) {
+    public static Item of(String description) {
         Item item = new Item();
         item.description = description;
-        item.done = done;
+        return item;
+    }
+
+    public static Item of(String description, User user) {
+        Item item = new Item();
+        item.description = description;
+        item.user = user;
         return item;
     }
 
@@ -60,6 +63,14 @@ public class Item {
         this.done = done;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -84,6 +95,7 @@ public class Item {
                 + ", description='" + description + '\''
                 + ", created=" + created
                 + ", done=" + done
+                + ", user=" + user
                 + '}';
     }
 }

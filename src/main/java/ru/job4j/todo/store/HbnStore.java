@@ -7,6 +7,8 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.todo.model.Item;
+import ru.job4j.todo.model.User;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -66,9 +68,11 @@ public class HbnStore implements Store, AutoCloseable {
     }
 
     @Override
-    public List<Item> findAll() {
+    public List<Item> findAll(int userId) {
         return this.tx(
-                session -> session.createQuery("from ru.job4j.todo.model.Item order by id asc")
+                session -> session.createQuery(
+                        "from ru.job4j.todo.model.Item where user_id = :id order by id asc")
+                        .setParameter("id", userId)
                         .list()
         );
     }
@@ -76,6 +80,21 @@ public class HbnStore implements Store, AutoCloseable {
     @Override
     public Item findById(int id) {
         return this.tx(session -> session.get(Item.class, id));
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return (User) this.tx(session -> session.createQuery("from ru.job4j.todo.model.User where email=:email")
+                    .setParameter("email", email).uniqueResult()
+        );
+    }
+
+    @Override
+    public User saveUser(User user) {
+        return this.tx(session -> {
+            session.save(user);
+            return user;
+        });
     }
 
     @Override

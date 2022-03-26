@@ -4,6 +4,21 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
+  <filter>
+    <filter-name>AuthFilter</filter-name>
+    <filter-class>ru.job4j.todo.filter.AuthFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>*.html</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+
   <servlet>
     <servlet-name>ToDoServlet</servlet-name>
     <servlet-class>ru.job4j.todo.servlet.ToDoServlet</servlet-class>
@@ -16,7 +31,18 @@
     <servlet-name>MarkServlet</servlet-name>
     <servlet-class>ru.job4j.todo.servlet.MarkServlet</servlet-class>
   </servlet>
-
+  <servlet>
+    <servlet-name>RegServlet</servlet-name>
+    <servlet-class>ru.job4j.todo.servlet.RegServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>AuthServlet</servlet-name>
+    <servlet-class>ru.job4j.todo.servlet.AuthServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>ru.job4j.todo.servlet.LogoutServlet</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>ToDoServlet</servlet-name>
@@ -29,5 +55,17 @@
   <servlet-mapping>
     <servlet-name>MarkServlet</servlet-name>
     <url-pattern>/mark.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RegServlet</servlet-name>
+    <url-pattern>/reg.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AuthServlet</servlet-name>
+    <url-pattern>/auth.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/logout.do</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -188,10 +188,18 @@ body {
 
 .items-statuses span:hover,
 .items-statuses span.on,
-.items-clear:hover {
+.items-clear:hover,
+.user-name {
     color: white;
 }
 
 .items-clear:hover {
     cursor: pointer;
+}
+
+.user {
+    width: 150px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
