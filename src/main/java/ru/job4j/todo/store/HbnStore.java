@@ -43,8 +43,12 @@ public class HbnStore implements Store, AutoCloseable {
     }
 
     @Override
-    public Item addItem(Item item) {
+    public Item addItem(Item item, String[] categoriesIds) {
         return this.tx(session -> {
+            for (String id : categoriesIds) {
+                Category category = session.find(Category.class, Integer.parseInt(id));
+                item.addCategory(category);
+            }
             session.save(item);
             return item;
         });

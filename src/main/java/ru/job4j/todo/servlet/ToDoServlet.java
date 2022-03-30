@@ -3,7 +3,6 @@ package ru.job4j.todo.servlet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.store.HbnStore;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,20 +35,19 @@ public class ToDoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-        String description = req.getParameter("description");
-        TypeToken<Map<String, String[]>> t = new TypeToken<>() { };
-        Map<String, String[]> categoriesMap = GSON.fromJson(req.getParameter("categoriesId"), t.getType());
-        List<Category> categories = new ArrayList<>();
-        for (String strId : categoriesMap.get("checkedCategoriesId")) {
-            categories.add(HbnStore.instOf().findCategoryById(Integer.parseInt(strId)));
-        }
-        Item itemInitial = Item.of(description, (User) req.getSession().getAttribute("user"), categories);
-        Item itemFounded = HbnStore.instOf().addItem(itemInitial);
-        String result = GSON.toJson(itemFounded);
+        Map<String, String[]> categoriesMap = GSON.fromJson(
+                req.getParameter("categoriesId"),
+                new TypeToken<Map<String, String[]>>() { }.getType()
+        );
+        Item itemInitial = Item.of(
+                req.getParameter("description"),
+                (User) req.getSession().getAttribute("user")
+        );
+        Item itemFounded = HbnStore.instOf().addItem(itemInitial, categoriesMap.get("checkedCategoriesId"));
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        writer.println(result);
+        writer.println(GSON.toJson(itemFounded));
         writer.flush();
         writer.close();
     }

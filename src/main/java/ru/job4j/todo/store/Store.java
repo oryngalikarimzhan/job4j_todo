@@ -7,7 +7,7 @@ import ru.job4j.todo.model.User;
 import java.util.List;
 
 public interface Store {
-    Item addItem(Item item);
+    Item addItem(Item item, String[] categoriesIds);
     boolean updateItem(Item item);
     boolean delete(int id);
     List<Item> findAll(int userId);

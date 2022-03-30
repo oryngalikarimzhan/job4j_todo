@@ -19,14 +19,13 @@ public class Item {
     private User user;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Category> categories = new ArrayList<>();
+    private Set<Category> categories = new HashSet<>();
 
-    public static Item of(String description, User user, List<Category> categories) {
+    public static Item of(String description, User user) {
         Item item = new Item();
         item.description = description;
         item.user = user;
         item.created = new Date(System.currentTimeMillis());
-        categories.forEach(category -> item.categories.add(category));
         return item;
     }
 
@@ -48,6 +47,10 @@ public class Item {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
     }
 
     @Override
