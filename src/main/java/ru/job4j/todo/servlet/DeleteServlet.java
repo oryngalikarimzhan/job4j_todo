@@ -18,9 +18,7 @@ public class DeleteServlet extends HttpServlet {
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        if (rsl) {
-            writer.println(rsl);
-        }
+        writer.println(rsl);
         writer.flush();
         writer.close();
     }

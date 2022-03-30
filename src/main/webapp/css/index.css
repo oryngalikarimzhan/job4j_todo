@@ -57,6 +57,10 @@ body {
     margin-top: 50px;
 }
 
+a {
+    color: white;
+}
+
 .check {
     width: 70px;
     display: flex;
@@ -161,9 +165,31 @@ body {
 }
 
 .todo-text {
-    width: 560px;
+    width: 300px;
     display: flex;
     align-items: center;
+}
+
+.item-categories {
+    width: 260px;
+    display: block;
+    align-items: center;
+    padding-top: 7px;
+}
+
+.item-categories span {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.todo-text-checked {
+    width: 300px;
+    display: flex;
+    align-items: center;
+    text-decoration: line-through;
+    text-decoration-color: black;
+    color: dimgray;
 }
 
 .todo-items-config {
@@ -202,4 +228,102 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.input-selector {
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: gray;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: darkgray;
+    margin-right: 10px;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+input[type="checkbox"]:after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f00c";
+    font-weight: 900;
+    font-size: 15px;
+}
+
+input[type="checkbox"]:hover {
+    background-color: black;
+    color: gray;
+}
+
+input[type="checkbox"]:checked {
+    background-color: black;
+    color: white;
+}
+
+.multi-selector {
+    width: 200px;
+    height: 70px;
+}
+
+.select-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 25px;
+}
+
+.select-field, .list {
+    width: 100%;
+    background-color: gray;
+}
+
+.list {
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+    display: none;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+.category div {
+    padding-top: 5px;
+}
+
+.down-arrow {
+    font-size: 20px;
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.25s linear;
+    margin-right: 10px;
+    color: white;
+}
+
+.category:hover {
+    color: white;
+}
+
+.show {
+    display: block;
+    position: absolute;
+    width: 200px;
+    z-index: 10;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
 }

@@ -6,9 +6,9 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Item;
 import ru.job4j.todo.model.User;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -71,8 +71,12 @@ public class HbnStore implements Store, AutoCloseable {
     public List<Item> findAll(int userId) {
         return this.tx(
                 session -> session.createQuery(
-                        "from ru.job4j.todo.model.Item where user_id = :id order by id asc")
-                        .setParameter("id", userId)
+                        "select distinct i "
+                                + "from ru.job4j.todo.model.Item i "
+                                + "join fetch i.categories "
+                                + "where user_id = :id "
+                                + "order by i.id asc"
+                ).setParameter("id", userId)
                         .list()
         );
     }
@@ -98,7 +102,21 @@ public class HbnStore implements Store, AutoCloseable {
     }
 
     @Override
+    public List<Category> findAllCategories() {
+        return this.tx(session ->
+                session.createQuery("from ru.job4j.todo.model.Category order by id asc")
+                        .list()
+        );
+    }
+
+    @Override
+    public Category findCategoryById(int id) {
+        return this.tx(session -> session.get(Category.class, id));
+    }
+
+    @Override
     public void close() throws Exception {
         StandardServiceRegistryBuilder.destroy(registry);
     }
 }
+

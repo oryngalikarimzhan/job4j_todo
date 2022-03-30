@@ -1,41 +1,39 @@
 const description = document.getElementById("todo-input");
 const addButton = document.getElementById("todo-input-btn");
 
+document.querySelector(".select-field").addEventListener("click", () => {
+    document.querySelector(".list").classList.toggle("show");
+    document.querySelector(".down-arrow").classList.toggle("rotate180");
+});
+
 document.querySelector(".items-statuses").addEventListener("click", function (e) {
     const id = e.target.id;
     if (id) {
         document.querySelector(".on").classList.remove("on");
         document.getElementById(id).classList.add("on");
     }
-
     var checkMarks = document.querySelectorAll(".todo-item .check .check-mark");
     var checkMarksChecked = document.querySelectorAll(".todo-item .check .check-mark-checked");
 
     if (id === "all") {
         checkMarks.forEach((checkMark) => {
-            console.log("all1")
             checkMark.parentElement.parentElement.style.display = "flex"
         });
         checkMarksChecked.forEach((checkMark) => {
-            console.log("all2")
             checkMark.parentElement.parentElement.style.display = "flex"
         });
     } else if (id === "active") {
         checkMarks.forEach((checkMark) => {
-            console.log("active1")
             checkMark.parentElement.parentElement.style.display = "flex"
         });
         checkMarksChecked.forEach((checkMark) => {
-            console.log("active2")
             checkMark.parentElement.parentElement.style.display = "none"
         });
     } else if (id === "completed") {
         checkMarks.forEach((checkMark) => {
-            console.log("completed1")
             checkMark.parentElement.parentElement.style.display = "none"
         });
         checkMarksChecked.forEach((checkMark) => {
-            console.log("completed2")
             checkMark.parentElement.parentElement.style.display = "flex"
         });
     }
@@ -54,8 +52,42 @@ description.addEventListener("keydown", function (e) {
 $(document).ready(function () {
     document.getElementById("all").classList.add("on");
     showItems();
-    createEventListeners();
+    showCategories();
 });
+
+function showCategories() {
+    const list = document.getElementById("list");
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/todo/category.do',
+        dataType: 'json',
+        async: false
+    }).done(function (categories) {
+        for (var i = 0; i < categories.length; i++) {
+            list.appendChild(generateCategory(categories[i]));
+        }
+    }).fail(function (err) {
+        console.log(err);
+    });
+}
+
+function generateCategory(category) {
+    const label = document.createElement("label");
+    const inputCheckbox = document.createElement("input");
+    const text = document.createElement("div");
+
+    label.className = "category";
+    label.setAttribute("for", category.id);
+
+    text.innerText = category.name;
+
+    inputCheckbox.setAttribute("type", "checkbox");
+    inputCheckbox.setAttribute("id", category.id);
+
+    label.appendChild(inputCheckbox);
+    label.appendChild(text);
+    return label;
+}
 
 function showItems() {
     $.ajax({
@@ -73,7 +105,7 @@ function showItems() {
 }
 
 function validate(event) {
-    if (description.value === "") {
+    if (description.value === "" || $('input[type="checkbox"]:checked').length == 0) {
         alert(description.title);
         event.preventDefault()
     } else {
@@ -82,17 +114,25 @@ function validate(event) {
 }
 
 function addItem() {
+    var checkedCategoriesId = [];
+    $('input[type="checkbox"]:checked').each(function() {
+       checkedCategoriesId.push(this.id);
+        this.checked = false;
+    });
+    document.querySelector(".list").classList.toggle("show");
     $.ajax({
         type: 'POST',
         url: 'http://localhost:8080/todo/todo.do',
         data: {
-            description: description.value
+            description: description.value,
+            categoriesId: JSON.stringify({
+                 checkedCategoriesId
+            })
         },
         dataType: 'json',
         async: false
     }).done(function(item) {
         generate(item);
-        document.location.reload();
     }).fail(function (err) {
         console.log(err)
     });
@@ -109,83 +149,78 @@ function generate(item) {
     const delItem = document.createElement("div");
     const delImg = document.createElement("img");
 
+    const categories = document.createElement("div");
+    categories.classList.add("item-categories");
+
+    for (var i = 0; i < item.categories.length; i++) {
+        const category = document.createElement("span");
+        category.innerText = item.categories[i].name;
+        categories.appendChild(category);
+    }
+
     todoItem.classList.add("todo-item");
     check.classList.add("check");
 
     if (item.done == true) {
-        checkMark.classList.add("check-mark-checked");
+        checkMark.className = "check-mark-checked";
+        todoText.className = "todo-text-checked";
     } else if (item.done == false){
-        checkMark.classList.add("check-mark");
+        checkMark.className = "check-mark";
+        todoText.className ="todo-text";
     }
+    checkMark.setAttribute("item-id", item.id);
+    img.setAttribute("src", "images/icon-check.svg");
+    todoText.innerHTML = item.description;
 
-    todoText.classList.add("todo-text");
     del.classList.add("delete");
     delItem.classList.add("delete-item");
-
     delItem.setAttribute("item-id", item.id);
     delImg.setAttribute("src", "images/icon-cross.svg");
 
-    img.setAttribute("src", "images/icon-check.svg");
-    checkMark.setAttribute("item-id", item.id);
-
-    todoText.innerHTML = item.description;
     checkMark.appendChild(img);
     delItem.appendChild(delImg);
     del.appendChild(delItem);
     check.appendChild(checkMark);
     todoItem.appendChild(check);
     todoItem.appendChild(todoText);
+    todoItem.appendChild(categories);
     todoItem.appendChild(del);
-
     document.querySelector('.todo-items').appendChild(todoItem);
-}
 
-function createEventListeners() {
-    var checkMarks = document.querySelectorAll(".todo-item .check .check-mark");
-    var checkMarksChecked = document.querySelectorAll(".todo-item .check .check-mark-checked");
-    var deleteButtons = document.querySelectorAll(".todo-item .delete .delete-item");
-    checkMarks.forEach((checkMark) => {
-        checkMark.addEventListener("click", function() {
-            markCompleted(checkMark);
-        })
-    })
-    checkMarksChecked.forEach((checkMark) => {
-        checkMark.addEventListener("click", function() {
-            markCompleted(checkMark);
-        })
-    })
-    deleteButtons.forEach((delItem) => {
-        delItem.addEventListener("click", function() {
-            deleteItem(delItem);
-        })
-    })
+    checkMark.addEventListener("click", function() {
+        markCompleted(checkMark);
+    });
+    delItem.addEventListener("click", function() {
+        deleteItem(delItem);
+    });
 }
 
 function markCompleted(item) {
-    console.log("mark completed");
     var rsl;
     if (item.className === "check-mark") {
-        item.classList.remove("check-mark");
-        item.classList.add("check-mark-checked");
+        item.className = "check-mark-checked";
+        item.parentElement.nextElementSibling.className = "todo-text-checked";
         rsl = true;
     } else if (item.className === "check-mark-checked") {
-        item.classList.remove("check-mark-checked");
-        item.classList.add("check-mark");
+        item.className = "check-mark";
+        item.parentElement.nextElementSibling.className = "todo-text";
         rsl = false;
     }
     var itemId = item.getAttribute("item-id");
     $.ajax({
         type: 'POST',
         url: 'http://localhost:8080/todo/mark.do',
+
         data: {
             id: itemId,
-            done: rsl
+            done: JSON.stringify(rsl)
         },
+        dataType: 'json',
         async: false
     }).done(function(data) {
         console.log(data);
     }).fail(function (err) {
-        alert(err)
+        console.log(err)
     });
 }
 
@@ -202,7 +237,7 @@ function deleteItem(item) {
         console.log(data);
         item.parentElement.parentElement.remove();
     }).fail(function (err) {
-        alert(err)
+        console.log(err)
     });
 }
 
