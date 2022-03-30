@@ -1,7 +1,6 @@
 package ru.job4j.todo.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Entity
@@ -11,7 +10,8 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String description;
-    private Timestamp created =  new Timestamp(System.currentTimeMillis());;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
     private boolean done = false;
 
     @ManyToOne
@@ -21,22 +21,14 @@ public class Item {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories = new ArrayList<>();
 
-
-    public static Item of(String description, User user) {
-        Item item = new Item();
-        item.description = description;
-        item.user = user;
-        return item;
-    }
-
     public static Item of(String description, User user, List<Category> categories) {
         Item item = new Item();
         item.description = description;
         item.user = user;
+        item.created = new Date(System.currentTimeMillis());
         categories.forEach(category -> item.categories.add(category));
         return item;
     }
-
 
     public int getId() {
         return id;
@@ -44,26 +36,6 @@ public class Item {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Timestamp getCreated() {
-        return created;
-    }
-
-    public void setCreated(Timestamp created) {
-        this.created = created;
-    }
-
-    public boolean isDone() {
-        return done;
     }
 
     public void setDone(boolean done) {
@@ -76,18 +48,6 @@ public class Item {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public void addCategories(Category category) {
-        this.categories.add(category);
     }
 
     @Override

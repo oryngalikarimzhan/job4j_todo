@@ -106,17 +106,8 @@ a {
     align-items: center;
 }
 
-.delete-mark {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.delete-item {
     cursor: pointer;
-}
-
-.delete-mark:hover {
-    transition: all 0.5s ease;
 }
 
 .new-todo-input {

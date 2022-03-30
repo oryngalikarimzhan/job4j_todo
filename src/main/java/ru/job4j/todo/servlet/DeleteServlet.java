@@ -1,6 +1,5 @@
 package ru.job4j.todo.servlet;
 
-import ru.job4j.todo.model.Item;
 import ru.job4j.todo.store.HbnStore;
 
 import javax.servlet.http.HttpServlet;

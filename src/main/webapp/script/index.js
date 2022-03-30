@@ -42,67 +42,13 @@ document.querySelector(".items-statuses").addEventListener("click", function (e)
 addButton.addEventListener("click", function () {
     validate(event);
 });
+
 description.addEventListener("keydown", function (e) {
     if (e.keyCode === 13) {
         validate(event);
         e.preventDefault();
     }
 });
-
-$(document).ready(function () {
-    document.getElementById("all").classList.add("on");
-    showItems();
-    showCategories();
-});
-
-function showCategories() {
-    const list = document.getElementById("list");
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:8080/todo/category.do',
-        dataType: 'json',
-        async: false
-    }).done(function (categories) {
-        for (var i = 0; i < categories.length; i++) {
-            list.appendChild(generateCategory(categories[i]));
-        }
-    }).fail(function (err) {
-        console.log(err);
-    });
-}
-
-function generateCategory(category) {
-    const label = document.createElement("label");
-    const inputCheckbox = document.createElement("input");
-    const text = document.createElement("div");
-
-    label.className = "category";
-    label.setAttribute("for", category.id);
-
-    text.innerText = category.name;
-
-    inputCheckbox.setAttribute("type", "checkbox");
-    inputCheckbox.setAttribute("id", category.id);
-
-    label.appendChild(inputCheckbox);
-    label.appendChild(text);
-    return label;
-}
-
-function showItems() {
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:8080/todo/todo.do',
-        dataType: 'json',
-        async: false
-    }).done(function (data) {
-        for (var i = 0; i < data.length; i++) {
-            generate(data[i]);
-        }
-    }).fail(function (err) {
-        console.log(err);
-    });
-}
 
 function validate(event) {
     if (description.value === "" || $('input[type="checkbox"]:checked').length == 0) {
@@ -116,7 +62,7 @@ function validate(event) {
 function addItem() {
     var checkedCategoriesId = [];
     $('input[type="checkbox"]:checked').each(function() {
-       checkedCategoriesId.push(this.id);
+        checkedCategoriesId.push(this.id);
         this.checked = false;
     });
     document.querySelector(".list").classList.toggle("show");
@@ -126,7 +72,7 @@ function addItem() {
         data: {
             description: description.value,
             categoriesId: JSON.stringify({
-                 checkedCategoriesId
+                checkedCategoriesId
             })
         },
         dataType: 'json',
@@ -240,6 +186,65 @@ function deleteItem(item) {
         console.log(err)
     });
 }
+
+$(document).ready(function () {
+    document.getElementById("all").classList.add("on");
+    showItems();
+    showCategories();
+});
+
+function showItems() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/todo/todo.do',
+        dataType: 'json',
+        async: false
+    }).done(function (data) {
+        for (var i = 0; i < data.length; i++) {
+            generate(data[i]);
+        }
+    }).fail(function (err) {
+        console.log(err);
+    });
+}
+
+function showCategories() {
+    const list = document.getElementById("list");
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/todo/category.do',
+        dataType: 'json',
+        async: false
+    }).done(function (categories) {
+        for (var i = 0; i < categories.length; i++) {
+            list.appendChild(generateCategory(categories[i]));
+        }
+    }).fail(function (err) {
+        console.log(err);
+    });
+}
+
+function generateCategory(category) {
+    const label = document.createElement("label");
+    const inputCheckbox = document.createElement("input");
+    const text = document.createElement("div");
+
+    label.className = "category";
+    label.setAttribute("for", category.id);
+
+    text.innerText = category.name;
+
+    inputCheckbox.setAttribute("type", "checkbox");
+    inputCheckbox.setAttribute("id", category.id);
+
+    label.appendChild(inputCheckbox);
+    label.appendChild(text);
+    return label;
+}
+
+
+
+
 
 
 
